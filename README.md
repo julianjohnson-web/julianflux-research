@@ -63,4 +63,4 @@ Note: This repository contains the pure Python bindings intended for educational
 
 For high-frequency production environments, the JulianFlux Enterprise Cloud executes these multivector physics equations in a zero-copy Rust/CUDA backend. This entirely eliminates Python interpreter bottlenecks, allowing continuous field equations to execute across billions of vectors with sub-millisecond p99 latencies.
 
-To inquire about Enterprise Cloud access or Design Partnerships, contact the founders at founders@julianflux.ai.
+To inquire about Enterprise Cloud access or Design Partnerships, contact the founder via LinkedIn or GitHub.
