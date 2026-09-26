@@ -10,16 +10,18 @@ warnings.filterwarnings("ignore")
 
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.neighbors import NearestNeighbors # ADDED: For dynamic sigma
 
 class ScalableJulianFluxEngine:
-    def __init__(self, manifold_dim=24, sigma=1.5):
+    # UPDATED: manifold_dim to 128, removed hardcoded sigma
+    def __init__(self, manifold_dim=128):
         self.manifold_dim = manifold_dim
-        self.sigma = sigma
         self.projection_matrix = None
         self.projected_vectors = None
         self.documents = None
         self.doc_charges = None
         self.doc_sequences = None
+        self.sigmas = None # ADDED: Array for dynamic bandwidths
 
     def _apply_jl_projection(self, raw_embeddings):
         if self.projection_matrix is None:
@@ -37,7 +39,20 @@ class ScalableJulianFluxEngine:
         
         print("[*] Ingesting vectors into the Julian Flux Engine...")
         self.projected_vectors = self._apply_jl_projection(raw_embeddings)
+        self._calculate_dynamic_bandwidths() # ADDED: Execute dynamic sigma calculation
         self._nli_logic_gate_verification()
+
+    # ADDED: Chief Scientist's dynamic sigma based on nearest neighbor distance
+    def _calculate_dynamic_bandwidths(self):
+        print("    [+] Calculating Dynamic Gaussian Bandwidths (σ) via Nearest Neighbors...")
+        if len(self.projected_vectors) > 1:
+            nn = NearestNeighbors(n_neighbors=2, metric='l2')
+            nn.fit(self.projected_vectors)
+            distances, _ = nn.kneighbors(self.projected_vectors)
+            # Use distance to the 1st nearest neighbor (index 1). Fallback to 0.1 to avoid division by zero.
+            self.sigmas = np.maximum(distances[:, 1], 0.1) 
+        else:
+            self.sigmas = np.ones(len(self.projected_vectors)) * 1.5
 
     def _nli_logic_gate_verification(self):
         print("    [+] Running Enterprise NLI Logic Gate (Contradiction Detection)...")
@@ -68,21 +83,25 @@ class ScalableJulianFluxEngine:
             dist_sq = np.sum((projected_query - doc_vec) ** 2)
             normalized_dist = dist_sq / norm_factor
             
-            # Electric Potential
-            potential = self.doc_charges[i] * np.exp(-normalized_dist / (self.sigma ** 2))
-            potentials[i] = potential
+            # UPDATED: Electric Field Magnitude (E) using dynamic sigma[i]
+            e_field = np.exp(-normalized_dist / (self.sigmas[i] ** 2))
+            potentials[i] = e_field
             
-            # Poynting Momentum
+            # UPDATED: Poynting Momentum (S) based on sequence
             seq_delta = self.doc_sequences[i] - agent_step
             if seq_delta == 1:
-                momentum = 0.5 * abs(potential)  # Perfect next step
+                momentum = 0.5 * e_field  # Perfect next step
             elif seq_delta < 0:
                 momentum = -0.2 * abs(seq_delta) # Deprecated past step
             else:
                 momentum = 0.0
             
             momentums[i] = momentum
-            combined_forces[i] = potential + momentum
+            
+            # UPDATED: The True Lorentz Force Equation -> m*x'' = q(E + S)
+            q = self.doc_charges[i]
+            force = q * (e_field + momentum)
+            combined_forces[i] = force
             
         latency = time.time() - start_time
         top_indices = np.argsort(combined_forces)[-top_k:][::-1]
@@ -164,7 +183,8 @@ def run_scale_benchmark():
     print("PIPELINE B: THE JULIAN FLUX ENGINE (LORENTZ FORCE)")
     print("===================================================")
     
-    engine = ScalableJulianFluxEngine(manifold_dim=24, sigma=1.5)
+    # UPDATED: Instantiating with 128D and dynamic sigma logic
+    engine = ScalableJulianFluxEngine(manifold_dim=128)
     engine.ingest_data(raw_document_vectors, docs, sequences)
     
     flux_top_indices, forces, flux_latency = engine.retrieve(raw_query_vector, AGENT_STEP, top_k=3)
