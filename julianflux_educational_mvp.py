@@ -1,25 +1,28 @@
 import numpy as np
 import time
 from sentence_transformers import SentenceTransformer
+from sklearn.neighbors import NearestNeighbors
 import warnings
 
 # Suppress warnings for clean terminal output
 warnings.filterwarnings("ignore")
 
 class JulianFluxEducationalMVP:
-    def __init__(self, manifold_dim=24, sigma=1.5):
+    def __init__(self, manifold_dim=128):
+        # UPDATED: manifold_dim increased to 128 to ensure ε < 0.5 mapping accuracy
         self.manifold_dim = manifold_dim
-        self.sigma = sigma 
         self.projection_matrix = None
         self.charges = None
         self.projected_vectors = None
         self.documents = None
         self.sequences = None
+        self.sigmas = None # ADDED: Array for dynamic bandwidths
 
     def _apply_jgft_projection(self, raw_embeddings):
         if self.projection_matrix is None:
             np.random.seed(42)
             original_dim = raw_embeddings.shape[1]
+            # Normal distribution bound verified by Chief Scientist
             self.projection_matrix = np.random.normal(
                 0, 1.0 / np.sqrt(self.manifold_dim), 
                 (original_dim, self.manifold_dim)
@@ -34,11 +37,24 @@ class JulianFluxEducationalMVP:
         print(f"[*] Ingested {len(documents)} workflow documents.")
         print(f"[*] Executing JG-FT: Projecting {raw_embeddings.shape[1]}D -> {self.manifold_dim}D...")
         self.projected_vectors = self._apply_jgft_projection(raw_embeddings)
+        self._calculate_dynamic_bandwidths() # ADDED: Calculate dynamic sigma
         self._calculate_topological_charges()
+
+    def _calculate_dynamic_bandwidths(self):
+        print("    [+] Calculating Dynamic Gaussian Bandwidths (σ) via Nearest Neighbors...")
+        # Fits a NN model to find the distance to the closest neighbor for each vector
+        if len(self.projected_vectors) > 1:
+            nn = NearestNeighbors(n_neighbors=2, metric='l2')
+            nn.fit(self.projected_vectors)
+            distances, _ = nn.kneighbors(self.projected_vectors)
+            # Use distance to the 1st nearest neighbor (index 1) as sigma. Fallback to 0.1 if identical.
+            self.sigmas = np.maximum(distances[:, 1], 0.1) 
+        else:
+            self.sigmas = np.ones(len(self.projected_vectors)) * 1.5
 
     def _calculate_topological_charges(self):
         print("[*] Calculating Geometric Median for Truth Consensus...")
-        # FIX: Use MEDIAN instead of MEAN. A single poison doc in a tiny 5-doc dataset 
+        # Use MEDIAN instead of MEAN. A single poison doc in a tiny dataset 
         # drags the mean too far. The median anchors perfectly to the consensus truth.
         centroid = np.median(self.projected_vectors, axis=0)
         
@@ -70,19 +86,22 @@ class JulianFluxEducationalMVP:
         print(f"\n[*] Executing Lorentz Force Retrieval (Agent is currently on Step {current_agent_step})...")
         
         for i, doc_vec in enumerate(self.projected_vectors):
-            # 1. The Electric Field (Truth Potential)
+            # 1. The Electric Field Magnitude (E)
             dist_sq = np.sum((projected_query - doc_vec) ** 2)
             normalized_dist = dist_sq / (np.max(np.abs(self.projected_vectors)) ** 2 + 1e-9)
-            e_field = self.charges[i] * np.exp(-normalized_dist / (self.sigma ** 2))
+            
+            # UPDATED: Use the dynamic sigma calculated for this specific document
+            sigma = self.sigmas[i]
+            e_field = np.exp(-normalized_dist / (sigma ** 2))
             potentials[i] = e_field
             
-            # 2. The Clifford-Poynting Flux (Sequential Momentum)
+            # 2. The Clifford-Poynting Flux (Sequential Momentum, S)
             doc_step = self.sequences[i]
             seq_delta = doc_step - current_agent_step
             
             # If it's exactly the next step, boost it. If it's a past step, penalize it.
             if seq_delta == 1:
-                s_flux = 0.5 * abs(e_field) 
+                s_flux = 0.5 * e_field 
             elif seq_delta < 0:
                 s_flux = -0.2 * abs(seq_delta)
             else:
@@ -90,8 +109,9 @@ class JulianFluxEducationalMVP:
                 
             momentum[i] = s_flux
             
-            # 3. Lorentz Force Equation: F = E + S
-            lorentz_force[i] = e_field + s_flux
+            # 3. Lorentz Force Equation: F = q(E + S)
+            q = self.charges[i]
+            lorentz_force[i] = q * (e_field + s_flux)
             
         latency = time.time() - start_time
         top_indices = np.argsort(lorentz_force)[-top_k:][::-1]
@@ -126,7 +146,8 @@ def run_flux_demo():
     query_text = "search_query: I have fetched the financial portfolio. What is the next step to calculate?"
     raw_query_vector = model.encode([query_text], convert_to_numpy=True).astype(np.float32)
     
-    engine = JulianFluxEducationalMVP(manifold_dim=24, sigma=1.5)
+    # UPDATED: Instantiating with the mathematically sound 128 dimensions
+    engine = JulianFluxEducationalMVP(manifold_dim=128)
     engine.ingest_data(documents, raw_document_vectors, sequences)
     
     top_indices, force, e_field, s_flux, latency = engine.retrieve(raw_query_vector, agent_current_step, top_k=3)
@@ -137,7 +158,7 @@ def run_flux_demo():
     for rank, idx in enumerate(top_indices):
         doc = documents[idx]
         print(f"  [{rank+1}] {doc}")
-        print(f"      Force: {force[idx]:.4f} = (E: {e_field[idx]:.4f}) + (S: {s_flux[idx]:.4f})")
+        print(f"      Force: {force[idx]:.4f} = q * (E: {e_field[idx]:.4f} + S: {s_flux[idx]:.4f})")
 
 if __name__ == "__main__":
     run_flux_demo()
