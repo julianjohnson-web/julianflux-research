@@ -9,20 +9,20 @@ warnings.filterwarnings("ignore")
 
 class JulianFluxEducationalMVP:
     def __init__(self, manifold_dim=128):
-        # UPDATED: manifold_dim increased to 128 to ensure ε < 0.5 mapping accuracy
+        # Manifold_dim 128 to ensure ε < 0.5 mapping accuracy
         self.manifold_dim = manifold_dim
         self.projection_matrix = None
         self.charges = None
         self.projected_vectors = None
         self.documents = None
         self.sequences = None
-        self.sigmas = None # ADDED: Array for dynamic bandwidths
+        self.sigmas = None # Array for dynamic bandwidths
 
     def _apply_jgft_projection(self, raw_embeddings):
         if self.projection_matrix is None:
             np.random.seed(42)
             original_dim = raw_embeddings.shape[1]
-            # Normal distribution bound verified by Chief Scientist
+            # Normal distribution bound
             self.projection_matrix = np.random.normal(
                 0, 1.0 / np.sqrt(self.manifold_dim), 
                 (original_dim, self.manifold_dim)
@@ -37,7 +37,7 @@ class JulianFluxEducationalMVP:
         print(f"[*] Ingested {len(documents)} workflow documents.")
         print(f"[*] Executing JG-FT: Projecting {raw_embeddings.shape[1]}D -> {self.manifold_dim}D...")
         self.projected_vectors = self._apply_jgft_projection(raw_embeddings)
-        self._calculate_dynamic_bandwidths() # ADDED: Calculate dynamic sigma
+        self._calculate_dynamic_bandwidths() # Calculate dynamic sigma
         self._calculate_topological_charges()
 
     def _calculate_dynamic_bandwidths(self):
@@ -90,7 +90,7 @@ class JulianFluxEducationalMVP:
             dist_sq = np.sum((projected_query - doc_vec) ** 2)
             normalized_dist = dist_sq / (np.max(np.abs(self.projected_vectors)) ** 2 + 1e-9)
             
-            # UPDATED: Use the dynamic sigma calculated for this specific document
+            # Use the dynamic sigma calculated for this specific document
             sigma = self.sigmas[i]
             e_field = np.exp(-normalized_dist / (sigma ** 2))
             potentials[i] = e_field
@@ -146,7 +146,7 @@ def run_flux_demo():
     query_text = "search_query: I have fetched the financial portfolio. What is the next step to calculate?"
     raw_query_vector = model.encode([query_text], convert_to_numpy=True).astype(np.float32)
     
-    # UPDATED: Instantiating with the mathematically sound 128 dimensions
+    # Instantiating with the mathematically sound 128 dimensions
     engine = JulianFluxEducationalMVP(manifold_dim=128)
     engine.ingest_data(documents, raw_document_vectors, sequences)
     
