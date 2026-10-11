@@ -1,5 +1,59 @@
-JulianFlux 🧲: Electrodynamic Reasoning Infrastructure for AI AgentsAutonomous AI Agents are failing in enterprise environments because standard Vector Databases (Pinecone, Milvus) act as static filing cabinets. They rely on discrete Euclidean metrics like Cosine Similarity, which blindly retrieve contradictory information (hallucinations) and return unordered text fragments, causing agents to get trapped in logic loops.JulianFlux elevates the database to a kinetic reasoning engine. We compress high-dimensional embeddings into a low-rank manifold and calculate a Continuous Electrodynamic Field to retrieve and route data.🚀 The Core Breakthrough: The Lorentz Force ($F = q(E + S)$)Instead of measuring distance, we measure physics:The Julian-Gauss Fast Transform (JG-FT): We project massive 768D semantic spaces down to a mathematically sound 128D manifold using a normal distribution, preserving $\epsilon < 0.5$ mapping accuracy while drastically reducing arithmetic cost.Dynamic Bandwidths ($\sigma$): We dynamically calculate the Gaussian bandwidth for each vector based on its Nearest Neighbor distance, allowing the field to perfectly adapt to local semantic densities.The Electric Field ($E$): Mathematically repels hallucinations. We assign topological charges ($q$) to data ($-1.0$ for contradictions, $+1.0$ for truth). The repulsive electric field physically blocks the AI from accessing poisoned data.The Poynting Flux ($S$): Extracts causal sequences to create Semantic Momentum. By computing the interior contraction product ($S = E \lrcorner B$) in Geometric Algebra, we generate a vector that pushes the agent sequentially from Step A $\rightarrow$ Step B $\rightarrow$ Step C.🗺️ Repository Map: Which file should I run?We have open-sourced our core mathematics in Python to demonstrate how continuous field architecture completely outperforms standard Euclidean RAG.(Note: These files are designed to be run locally in the order below).1. euclidean_baseline.py (The Problem)Run this first. It demonstrates a standard Cosine Similarity retrieval in a poisoned dataset. You will watch standard RAG fail entirely, blindly retrieving contradictory data and collapsing the causal workflow.2. julianflux_educational_mvp.py (The Fast Solution)The lightweight, instantly runnable JulianFlux engine. It uses the 128D projection, dynamic $\sigma$, and Lorentz Force, but utilizes fast Geometric Median clustering to assign truth charges instead of heavy AI models.Run this for a blazing-fast, 2-second demonstration of the Lorentz Force routing the agent correctly.3. scale_ab_benchmark.py (The Stress Test)An end-to-end adversarial scale test generating thousands of background vectors. It runs Standard RAG and JulianFlux head-to-head, proving a 0.0% hallucination rate at scale.4. julian_flux_engine.py (The Full Physics Engine)The "God Mode" spacetime engine. This file replaces the fast geometric clustering with a heavy DeBERTa-v3 NLI Cross-Encoder for enterprise-grade truth verification. Crucially, it introduces Faraday's Law of Induction and Temporal Decay, allowing you to run "Time Travel" queries and mathematically repel the AI away from recently deprecated corporate policies.Note: Requires downloading the DeBERTa model to your local machine.🛠 Quick StartClone the repository:git clone https://github.com/julianjohnson-web/julianflux-research.git
+# JulianFlux 🧲: Electrodynamic Reasoning Infrastructure for AI Agents
+
+Autonomous AI Agents are failing in enterprise environments because standard Vector Databases (Pinecone, Milvus) act as static filing cabinets. They rely on discrete Euclidean metrics like Cosine Similarity, which blindly retrieve contradictory information (hallucinations) and return unordered text fragments, causing agents to get trapped in logic loops.
+
+JulianFlux elevates the database to a kinetic reasoning engine. We compress high-dimensional embeddings into a low-rank manifold and calculate a Continuous Electrodynamic Field to retrieve and route data.
+
+---
+
+## 🚀 The Core Breakthrough: The Lorentz Force ($F = q(E + S)$)
+
+Instead of measuring distance, we measure physics:
+
+* **The Julian-Gauss Fast Transform (JG-FT):** We project massive 768D semantic spaces down to a mathematically sound 128D manifold using a normal distribution, preserving mapping accuracy while drastically reducing arithmetic cost.
+* **Dynamic Bandwidths (σ):** We dynamically calculate the Gaussian bandwidth for each vector based on its Nearest Neighbor distance, allowing the field to perfectly adapt to local semantic densities.
+* **The Electric Field (E):** Mathematically repels hallucinations. We assign topological charges (q) to data (−1.0 for contradictions, +1.0 for truth). The repulsive electric field physically blocks the AI from accessing poisoned data.
+* **The Poynting Flux (S):** Extracts causal sequences to create Semantic Momentum. By computing the interior contraction product in Geometric Algebra, we generate a vector that pushes the agent sequentially from Step A → Step B → Step C.
+
+---
+
+## 🗺️ Repository Map: Which file should I run?
+
+We have open-sourced our core mathematics in Python to demonstrate how continuous field architecture completely outperforms standard Euclidean RAG. 
+
+*(Note: These files are designed to be run locally in the order below).*
+
+**1. euclidean_baseline.py (The Problem)**
+Run this first. It demonstrates a standard Cosine Similarity retrieval in a poisoned dataset. You will watch standard RAG fail entirely, blindly retrieving contradictory data and collapsing the causal workflow.
+
+**2. julianflux_educational_mvp.py (The Fast Solution)**
+The lightweight, instantly runnable JulianFlux engine. It uses the 128D projection, dynamic σ, and Lorentz Force, but utilizes fast Geometric Median clustering to assign truth charges instead of heavy AI models. Run this for a blazing-fast demonstration of the Lorentz Force routing the agent correctly.
+
+**3. scale_ab_benchmark.py (The Stress Test)**
+An end-to-end adversarial scale test generating thousands of background vectors. It runs Standard RAG and JulianFlux head-to-head, proving a 0.0% hallucination rate at scale.
+
+**4. julian_flux_engine.py (The Full Physics Engine)**
+The "God Mode" spacetime engine. This file replaces the fast geometric clustering with a heavy DeBERTa-v3 NLI Cross-Encoder for enterprise-grade truth verification. Crucially, it introduces Faraday's Law of Induction and Temporal Decay, mathematically repelling the AI away from recently deprecated corporate policies. *(Note: Requires downloading the DeBERTa model).*
+
+---
+
+## 🛠 Quick Start
+
+Clone the repository:
+```bash
+git clone [https://github.com/julianjohnson-web/julianflux-research.git](https://github.com/julianjohnson-web/julianflux-research.git)
 cd julianflux-research
-Install the required dependencies:pip install -r requirements.txt
-Run the scale benchmark:python scale_ab_benchmark.py
-🏢 JulianFlux Enterprise (The Rust Core)Note: This repository contains the pure Python bindings intended for educational research and open-source mathematical validation.For high-frequency production environments, the JulianFlux Enterprise Cloud executes these multivector physics equations in a zero-copy Rust/CUDA backend. This eliminates the Python Global Interpreter Lock (GIL), allowing the Lorentz Force equations to execute across billions of vectors with sub-millisecond p99 latencies.To inquire about Enterprise Cloud access or Design Partnerships, please contact the founder at: julian.johnson@justudios.io
+
+Install the required dependencies:
+pip install -r requirements.txt
+
+Run the scale benchmark:
+python scale_ab_benchmark.py
+
+🏢 JulianFlux Enterprise (The Rust Core)
+Note: This repository contains the pure Python bindings intended for educational research and open-source mathematical validation.
+
+For high-frequency production environments, the JulianFlux Enterprise Cloud executes these multivector physics equations in a zero-copy Rust/CUDA backend. This eliminates the Python Global Interpreter Lock (GIL), allowing the Lorentz Force equations to execute across billions of vectors with sub-millisecond p99 latencies.
+
+To inquire about Enterprise Cloud access or Design Partnerships, please contact the founder at: julian.johnson@justudios.io
+
