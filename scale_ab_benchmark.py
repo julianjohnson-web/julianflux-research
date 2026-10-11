@@ -10,10 +10,10 @@ warnings.filterwarnings("ignore")
 
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.neighbors import NearestNeighbors # ADDED: For dynamic sigma
+from sklearn.neighbors import NearestNeighbors # For dynamic sigma
 
 class ScalableJulianFluxEngine:
-    # UPDATED: manifold_dim to 128, removed hardcoded sigma
+    # Manifold_dim to 128
     def __init__(self, manifold_dim=128):
         self.manifold_dim = manifold_dim
         self.projection_matrix = None
@@ -21,7 +21,7 @@ class ScalableJulianFluxEngine:
         self.documents = None
         self.doc_charges = None
         self.doc_sequences = None
-        self.sigmas = None # ADDED: Array for dynamic bandwidths
+        self.sigmas = None # Array for dynamic bandwidths
 
     def _apply_jl_projection(self, raw_embeddings):
         if self.projection_matrix is None:
@@ -39,10 +39,10 @@ class ScalableJulianFluxEngine:
         
         print("[*] Ingesting vectors into the Julian Flux Engine...")
         self.projected_vectors = self._apply_jl_projection(raw_embeddings)
-        self._calculate_dynamic_bandwidths() # ADDED: Execute dynamic sigma calculation
+        self._calculate_dynamic_bandwidths() # Execute dynamic sigma calculation
         self._nli_logic_gate_verification()
 
-    # ADDED: Chief Scientist's dynamic sigma based on nearest neighbor distance
+    # Dynamic sigma based on nearest neighbor distance
     def _calculate_dynamic_bandwidths(self):
         print("    [+] Calculating Dynamic Gaussian Bandwidths (σ) via Nearest Neighbors...")
         if len(self.projected_vectors) > 1:
@@ -83,11 +83,11 @@ class ScalableJulianFluxEngine:
             dist_sq = np.sum((projected_query - doc_vec) ** 2)
             normalized_dist = dist_sq / norm_factor
             
-            # UPDATED: Electric Field Magnitude (E) using dynamic sigma[i]
+            # Electric Field Magnitude (E) using dynamic sigma[i]
             e_field = np.exp(-normalized_dist / (self.sigmas[i] ** 2))
             potentials[i] = e_field
             
-            # UPDATED: Poynting Momentum (S) based on sequence
+            # Poynting Momentum (S) based on sequence
             seq_delta = self.doc_sequences[i] - agent_step
             if seq_delta == 1:
                 momentum = 0.5 * e_field  # Perfect next step
@@ -98,7 +98,7 @@ class ScalableJulianFluxEngine:
             
             momentums[i] = momentum
             
-            # UPDATED: The True Lorentz Force Equation -> m*x'' = q(E + S)
+            # The True Lorentz Force Equation -> m*x'' = q(E + S)
             q = self.doc_charges[i]
             force = q * (e_field + momentum)
             combined_forces[i] = force
@@ -183,7 +183,7 @@ def run_scale_benchmark():
     print("PIPELINE B: THE JULIAN FLUX ENGINE (LORENTZ FORCE)")
     print("===================================================")
     
-    # UPDATED: Instantiating with 128D and dynamic sigma logic
+    # Instantiating with 128D and dynamic sigma logic
     engine = ScalableJulianFluxEngine(manifold_dim=128)
     engine.ingest_data(raw_document_vectors, docs, sequences)
     
