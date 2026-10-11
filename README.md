@@ -35,23 +35,6 @@ An end-to-end adversarial scale test generating thousands of background vectors.
 
 **4. julian_flux_engine.py (The Full Physics Engine)**
 The spacetime engine. This file replaces the fast geometric clustering with a heavy DeBERTa-v3 NLI Cross-Encoder for enterprise-grade truth verification. Crucially, it introduces Faraday's Law of Induction and Temporal Decay, mathematically repelling the AI away from recently deprecated corporate policies. *(Note: Requires downloading the DeBERTa model).*
-## 🗺️ Repository Map: Which file should I run?
-
-We have open-sourced our core mathematics in Python to demonstrate how continuous field architecture completely outperforms standard Euclidean RAG. 
-
-*(Note: These files are designed to be run locally in the order below).*
-
-**1. euclidean_baseline.py (The Problem)**
-Run this first. It demonstrates a standard Cosine Similarity retrieval in a poisoned dataset. You will watch standard RAG fail entirely, blindly retrieving contradictory data and collapsing the causal workflow.
-
-**2. julianflux_educational_mvp.py (The Fast Solution)**
-The lightweight, instantly runnable JulianFlux engine. It uses the 128D projection, dynamic σ, and Lorentz Force, but utilizes fast Geometric Median clustering to assign truth charges instead of heavy AI models. Run this for a blazing-fast demonstration of the Lorentz Force routing the agent correctly.
-
-**3. scale_ab_benchmark.py (The Stress Test)**
-An end-to-end adversarial scale test generating thousands of background vectors. It runs Standard RAG and JulianFlux head-to-head, proving a 0.0% hallucination rate at scale.
-
-**4. julian_flux_engine.py (The Full Physics Engine)**
-The spacetime engine. This file replaces the fast geometric clustering with a heavy DeBERTa-v3 NLI Cross-Encoder for enterprise-grade truth verification. Crucially, it introduces Faraday's Law of Induction and Temporal Decay, mathematically repelling the AI away from recently deprecated corporate policies. *(Note: Requires downloading the DeBERTa model).*
 
 ---
 
