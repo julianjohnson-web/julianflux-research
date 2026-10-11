@@ -34,7 +34,7 @@ The lightweight, instantly runnable JulianFlux engine. It uses the 128D projecti
 An end-to-end adversarial scale test generating thousands of background vectors. It runs Standard RAG and JulianFlux head-to-head, proving a 0.0% hallucination rate at scale.
 
 **4. julian_flux_engine.py (The Full Physics Engine)**
-The "God Mode" spacetime engine. This file replaces the fast geometric clustering with a heavy DeBERTa-v3 NLI Cross-Encoder for enterprise-grade truth verification. Crucially, it introduces Faraday's Law of Induction and Temporal Decay, mathematically repelling the AI away from recently deprecated corporate policies. *(Note: Requires downloading the DeBERTa model).*
+The spacetime engine. This file replaces the fast geometric clustering with a heavy DeBERTa-v3 NLI Cross-Encoder for enterprise-grade truth verification. Crucially, it introduces Faraday's Law of Induction and Temporal Decay, mathematically repelling the AI away from recently deprecated corporate policies. *(Note: Requires downloading the DeBERTa model).*
 ## 🗺️ Repository Map: Which file should I run?
 
 We have open-sourced our core mathematics in Python to demonstrate how continuous field architecture completely outperforms standard Euclidean RAG. 
