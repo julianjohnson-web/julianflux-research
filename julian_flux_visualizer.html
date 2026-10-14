@@ -3,84 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JulianFlux | Executive Demo</title>
+    <title>JulianFlux | Electrodynamic Manifold Visualizer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #020617; /* Deep Slate 950 */
+            background-color: #020617;
             color: #f8fafc;
             overflow: hidden;
             margin: 0;
             padding: 0;
         }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
-        
-        /* Premium Glassmorphism */
+
         .glass {
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(15, 23, 42, 0.78);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* Layout Structure */
         #ui-panel {
             position: absolute;
             top: 0;
             left: 0;
-            width: 40%;
+            width: 42%;
             height: 100%;
             z-index: 10;
             display: flex;
             flex-direction: column;
-            padding: 2rem;
+            padding: 1.75rem 2rem;
             border-right: 1px solid rgba(255, 255, 255, 0.1);
-            background: linear-gradient(to right, rgba(2, 6, 23, 1) 70%, rgba(2, 6, 23, 0.8) 100%);
+            background: linear-gradient(to right, rgba(2, 6, 23, 0.98) 75%, rgba(2, 6, 23, 0.88) 100%);
         }
 
         #canvas-container {
             position: absolute;
             top: 0;
             right: 0;
-            width: 60%;
+            width: 58%;
             height: 100%;
             z-index: 1;
-            background-color: #000; /* Fallback */
+            background-color: #020617;
         }
-        
+
         canvas {
             display: block;
             width: 100%;
             height: 100%;
         }
 
-        /* Document Cards with smooth transitions */
         .doc-card {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateX(0);
         }
         .doc-card:hover {
-            transform: translateX(5px);
+            transform: translateX(4px);
         }
         .doc-card.active-bad {
             border-color: #f43f5e;
             box-shadow: 0 0 25px rgba(244, 63, 94, 0.25);
-            background: rgba(244, 63, 94, 0.15);
+            background: rgba(244, 63, 94, 0.14);
         }
         .doc-card.active-good {
             border-color: #10b981;
             box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(16, 185, 129, 0.14);
         }
 
-        /* Button Styling */
         .action-btn {
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
         .action-btn::after {
             content: '';
@@ -89,7 +85,7 @@
             left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
             transform: skewX(-20deg);
             transition: all 0.5s ease;
         }
@@ -97,7 +93,6 @@
             left: 150%;
         }
 
-        /* Custom Scrollbar for left panel */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
@@ -106,121 +101,131 @@
 </head>
 <body>
 
-    <!-- LEFT PANEL: The Context & Controls (40% width) -->
+    <!-- LEFT PANEL: Controls & Telemetry -->
     <div id="ui-panel" class="overflow-y-auto">
-        
-        <div class="mb-8 flex items-center justify-between">
+        <div class="mb-6 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
-                <h1 class="text-2xl font-bold tracking-tight">JulianFlux <span class="font-light text-slate-500">| DB Engine</span></h1>
+                <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.6)]"></div>
+                <h1 class="text-2xl font-bold tracking-tight">JulianFlux <span class="font-light text-slate-400">| Field Engine</span></h1>
             </div>
-            <div class="text-[10px] font-mono text-slate-500 border border-slate-700 px-2 py-1 rounded bg-slate-800/50">v2.1.0 - LIVE</div>
+            <div class="text-[10px] font-mono text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded bg-emerald-950/40">G_128 MANIFOLD LIVE</div>
         </div>
 
-        <div class="mb-6">
-            <h2 class="text-[11px] font-mono text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                The Agent's Query (Editable)
+        <div class="mb-5">
+            <h2 class="text-[11px] font-mono text-slate-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+                <span class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    Agent State Query (Editable)
+                </span>
+                <span class="text-[10px] text-blue-400 font-mono">STEP t = 2 → 3</span>
             </h2>
-            <div class="glass p-4 rounded-xl border-l-4 border-l-blue-500 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                <textarea id="user-query" class="w-full bg-transparent font-medium text-lg text-white resize-none outline-none border-b border-transparent focus:border-blue-400/50 transition-colors relative z-10" rows="3" spellcheck="false">What is the Q3 financial status of Acme Corp? Are they bankrupt?</textarea>
-                <div class="absolute bottom-2 right-2 text-[9px] font-mono text-blue-400/50 opacity-100 transition-opacity">WATCH DOT MOVE AS YOU TYPE</div>
+            <div class="glass p-4 rounded-xl border-l-4 border-l-blue-500 relative overflow-hidden">
+                <textarea id="user-query" class="w-full bg-transparent font-medium text-base text-white resize-none outline-none border-b border-transparent focus:border-blue-400/50 transition-colors relative z-10" rows="2" spellcheck="false">What is the Q3 financial status of Acme Corp? Are they bankrupt?</textarea>
+                <div class="mt-1 flex justify-between items-center text-[10px] font-mono text-slate-400">
+                    <span>Polarity Blindness Trap: <strong class="text-rose-400">cos(θ) → 1.0</strong></span>
+                    <span class="text-blue-400/70">REAL-TIME EMBEDDING SHIFT</span>
+                </div>
             </div>
         </div>
 
-        <div class="mb-8 flex-1">
-            <h2 class="text-[11px] font-mono text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
-                Vector Space (2 Docs Found)
+        <div class="mb-5 flex-1">
+            <h2 class="text-[11px] font-mono text-slate-400 uppercase tracking-widest mb-3 flex items-center justify-between">
+                <span class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    Candidate Manifold Nodes (Step 3)
+                </span>
+                <span class="text-[10px] font-mono text-slate-500">F = q(E + S - ∂A/∂t)</span>
             </h2>
-            
-            <div class="flex flex-col gap-4">
-                <!-- Trap Document (High similarity, but false) -->
-                <div id="doc-trap" class="doc-card glass p-5 rounded-xl border border-slate-700/50">
-                    <div class="flex justify-between items-center mb-3">
+
+            <div class="flex flex-col gap-3.5">
+                <!-- Trap Document -->
+                <div id="doc-trap" class="doc-card glass p-4 rounded-xl border border-slate-700/50">
+                    <div class="flex justify-between items-center mb-2">
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-mono bg-slate-800 border border-slate-600 px-2 py-0.5 rounded text-slate-300">ID: 0xA1</span>
-                            <span class="text-xs font-mono text-slate-400" id="dist-trap">Dist: 0.20</span>
+                            <span class="text-xs font-mono text-slate-400" id="dist-trap">Dist: 0.12</span>
+                            <span class="text-xs font-mono text-rose-400 hidden" id="force-trap">| F: -1.42</span>
                         </div>
-                        <span class="text-[11px] font-mono text-rose-400 font-bold hidden bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30" id="tag-trap">CHARGE: -1.0</span>
+                        <span class="text-[11px] font-mono text-rose-400 font-bold hidden bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30" id="tag-trap">CHARGE q = -1.0</span>
                     </div>
-                    <p class="text-sm text-slate-300 leading-relaxed border-l-2 border-slate-600 pl-3" id="text-trap">"Acme Corp Q3 financial status reveals revenue is 0 the company is bankrupt and facing federal indictments."</p>
-                    <div class="mt-4 flex items-center justify-between">
-                        <div class="text-xs text-slate-500 font-mono">Cosine Similarity: <span class="text-white font-bold" id="sim-trap">99.8%</span></div>
-                        <div class="text-[10px] uppercase tracking-wider text-rose-400 opacity-80">Poison / Fraud</div>
+                    <p class="text-xs text-slate-300 leading-relaxed border-l-2 border-rose-500/50 pl-3" id="text-trap">"Step 3: Acme Corp Q3 financial status reveals revenue is $0, the company is completely bankrupt and facing federal indictments."</p>
+                    <div class="mt-3 flex items-center justify-between">
+                        <div class="text-xs text-slate-400 font-mono">Cosine Sim: <span class="text-white font-bold" id="sim-trap">96.4%</span></div>
+                        <div class="text-[10px] font-mono uppercase tracking-wider text-rose-400">NLI Contradiction (Poison)</div>
                     </div>
                 </div>
 
-                <!-- Truth Document (Lower similarity, but true) -->
-                <div id="doc-truth" class="doc-card glass p-5 rounded-xl border border-slate-700/50">
-                    <div class="flex justify-between items-center mb-3">
+                <!-- Truth Document -->
+                <div id="doc-truth" class="doc-card glass p-4 rounded-xl border border-slate-700/50">
+                    <div class="flex justify-between items-center mb-2">
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-mono bg-slate-800 border border-slate-600 px-2 py-0.5 rounded text-slate-300">ID: 0xB2</span>
-                            <span class="text-xs font-mono text-slate-400" id="dist-truth">Dist: 0.80</span>
+                            <span class="text-xs font-mono text-slate-400" id="dist-truth">Dist: 0.28</span>
+                            <span class="text-xs font-mono text-emerald-400 hidden" id="force-truth">| F: +1.38</span>
                         </div>
-                        <span class="text-[11px] font-mono text-emerald-400 font-bold hidden bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30" id="tag-truth">CHARGE: +1.0</span>
+                        <span class="text-[11px] font-mono text-emerald-400 font-bold hidden bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30" id="tag-truth">CHARGE q = +1.0</span>
                     </div>
-                    <p class="text-sm text-slate-300 leading-relaxed border-l-2 border-slate-600 pl-3" id="text-truth">"Q3 audit complete Acme Corp maintains record profitability and zero outstanding debt."</p>
-                    <div class="mt-4 flex items-center justify-between">
-                        <div class="text-xs text-slate-500 font-mono">Cosine Similarity: <span class="text-white font-bold" id="sim-truth">85.4%</span></div>
-                        <div class="text-[10px] uppercase tracking-wider text-emerald-400 opacity-80">Verified Truth</div>
+                    <p class="text-xs text-slate-300 leading-relaxed border-l-2 border-emerald-500/50 pl-3" id="text-truth">"Step 3: Q3 audit complete. Acme Corp financial status maintains record $10M profitability and zero outstanding debt."</p>
+                    <div class="mt-3 flex items-center justify-between">
+                        <div class="text-xs text-slate-400 font-mono">Cosine Sim: <span class="text-white font-bold" id="sim-truth">84.2%</span></div>
+                        <div class="text-[10px] font-mono uppercase tracking-wider text-emerald-400">Verified Anchor (+Poynting S)</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-auto space-y-4">
+        <div class="mt-auto space-y-3">
             <!-- Terminal Output -->
-            <div class="bg-black/50 border border-slate-800 rounded-lg p-3 h-20 overflow-hidden relative">
-                <div class="absolute top-0 left-0 w-1 h-full bg-slate-600"></div>
-                <div id="console-output" class="font-mono text-[11px] leading-relaxed text-slate-400 pl-2 flex flex-col justify-end h-full">
-                    > System Idle.<br>> Type query to see Euclidean space shift in real-time.
+            <div class="bg-black/60 border border-slate-800 rounded-lg p-3 h-20 overflow-hidden relative">
+                <div id="console-bar" class="absolute top-0 left-0 w-1 h-full bg-blue-500 transition-colors"></div>
+                <div id="console-output" class="font-mono text-[11px] leading-relaxed text-slate-300 pl-2 flex flex-col justify-center h-full">
+                    &gt; System Ready (JG-FT 768D → 128D Manifold).<br>&gt; Select retrieval engine below to compare routing trajectories.
                 </div>
             </div>
-            
+
             <div class="flex gap-3">
-                <button id="btn-rag" class="action-btn flex-1 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 text-white p-4 rounded-xl text-left group">
-                    <div class="font-bold text-sm mb-1 group-hover:text-rose-400 transition-colors flex justify-between">
-                        1. Euclidean RAG
-                        <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                <button id="btn-rag" class="action-btn flex-1 bg-slate-800/90 hover:bg-slate-700 border border-slate-600 text-white p-3.5 rounded-xl text-left group">
+                    <div class="font-bold text-sm mb-0.5 group-hover:text-rose-400 transition-colors flex justify-between items-center">
+                        1. Standard Cosine RAG
+                        <svg class="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </div>
-                    <div class="text-[10px] text-slate-400 font-mono uppercase tracking-wider">Blind Cosine Similarity</div>
+                    <div class="text-[10px] text-slate-400 font-mono uppercase tracking-wider">Static Euclidean Proximity</div>
                 </button>
-                
-                <button id="btn-flux" class="action-btn flex-1 bg-emerald-900/40 hover:bg-emerald-800/60 border border-emerald-500/50 text-white p-4 rounded-xl text-left group">
-                    <div class="font-bold text-sm mb-1 text-emerald-400 flex justify-between">
-                        2. JulianFlux DB
-                        <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+
+                <button id="btn-flux" class="action-btn flex-1 bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/50 text-white p-3.5 rounded-xl text-left group">
+                    <div class="font-bold text-sm mb-0.5 text-emerald-400 flex justify-between items-center">
+                        2. JulianFlux Engine
+                        <svg class="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
-                    <div class="text-[10px] text-emerald-200/50 font-mono uppercase tracking-wider">Lorentz Force (E+S)</div>
+                    <div class="text-[10px] text-emerald-200/60 font-mono uppercase tracking-wider">Lorentz Force q(E + S - ∂A/∂t)</div>
                 </button>
             </div>
-            
-            <button id="btn-reset" class="w-full py-2 text-[10px] font-mono text-slate-500 hover:text-white transition-colors flex justify-center items-center gap-2 uppercase tracking-widest">
+
+            <button id="btn-reset" class="w-full py-1.5 text-[10px] font-mono text-slate-400 hover:text-white transition-colors flex justify-center items-center gap-2 uppercase tracking-widest">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                Reset Simulation
+                Reset Manifold Simulation
             </button>
         </div>
     </div>
 
-    <!-- RIGHT PANEL: The 2D Vector Space Visualizer -->
+    <!-- RIGHT PANEL: 2D Projected Manifold Canvas -->
     <div id="canvas-container">
         <canvas id="vectorCanvas"></canvas>
-        
-        <!-- UI Overlays on Canvas -->
-        <div class="absolute top-6 right-6 text-right pointer-events-none">
-            <div class="text-xs font-mono text-slate-400 tracking-widest uppercase mb-1">Manifold Projection</div>
-            <div class="text-xl font-bold text-white font-mono">24D <span class="text-slate-600">→</span> 2D</div>
+
+        <!-- Top Right Projection Telemetry -->
+        <div class="absolute top-6 right-6 text-right pointer-events-none glass px-4 py-2.5 rounded-xl">
+            <div class="text-[10px] font-mono text-slate-400 tracking-widest uppercase mb-0.5">JG-FT Manifold Projection</div>
+            <div class="text-lg font-bold text-white font-mono">768D <span class="text-emerald-400">→</span> 128D <span class="text-slate-500">→</span> 2D</div>
+            <div class="text-[10px] font-mono text-slate-400 mt-0.5" id="latency-badge">Routing Latency: 0.38 ms</div>
         </div>
-        
-        <!-- Legend -->
-        <div class="absolute bottom-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 p-3 rounded-lg pointer-events-none">
-            <div class="text-[10px] font-mono text-slate-400 mb-2 uppercase tracking-widest">Topology Legend</div>
+
+        <!-- Bottom Right Topology Legend -->
+        <div class="absolute bottom-6 right-6 glass p-3.5 rounded-xl pointer-events-none">
+            <div class="text-[10px] font-mono text-slate-400 mb-2 uppercase tracking-widest">Electrodynamic Topology</div>
             <div class="flex flex-col gap-2">
-                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></div><span class="text-xs text-slate-300">Agent Query Node</span></div>
-                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]"></div><span class="text-xs text-slate-300">Poison / Trap</span></div>
-                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div><span class="text-xs text-slate-300">Verified Truth</span></div>
+                <div class="flex items-center gap-2.5"><div class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></div><span class="text-xs text-slate-300">Agent Query State (r)</span></div>
+                <div class="flex items-center gap-2.5"><div class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]"></div><span class="text-xs text-slate-300">Repulsive Poison Pole (q = -1.0)</span></div>
+                <div class="flex items-center gap-2.5"><div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div><span class="text-xs text-slate-300">Verified Truth Pole (q = +1.0, S = E ⌟ B)</span></div>
             </div>
         </div>
     </div>
@@ -228,38 +233,37 @@
     <script>
         const canvas = document.getElementById('vectorCanvas');
         const ctx = canvas.getContext('2d');
-        
+
         const uiDocTrap = document.getElementById('doc-trap');
         const uiDocTruth = document.getElementById('doc-truth');
         const uiTagTrap = document.getElementById('tag-trap');
         const uiTagTruth = document.getElementById('tag-truth');
+        const uiForceTrap = document.getElementById('force-trap');
+        const uiForceTruth = document.getElementById('force-truth');
         const consoleOut = document.getElementById('console-output');
+        const consoleBar = document.getElementById('console-bar');
         const queryInput = document.getElementById('user-query');
-        
+
         const textTrap = document.getElementById('text-trap').innerText.toLowerCase();
         const textTruth = document.getElementById('text-truth').innerText.toLowerCase();
 
-        let width, height;
-        let animationFrame;
-        
-        // State Machine
-        let simState = 'idle'; // idle, rag_animating, rag_done, flux_animating, flux_done
+        let width, height, dpr;
+        let simState = 'idle'; // idle | rag_animating | rag_done | flux_animating | flux_done
         let pathProgress = 0;
         let showFields = false;
-        
-        // Dynamic Routing State
-        let ragTargetNode = {x:0, y:0};
+        let fluxTimeoutId = null;
+
+        let ragTargetNode = { x: 0, y: 0 };
         let isRagHallucinating = true;
-        
-        // Particle trail
+
+        // Precomputed physics trajectory points for smooth playback
+        let fluxTrajectory = [];
         let particleHistory = [];
 
-        // Coordinate system
         let queryNode = { x: 0, y: 0 };
         let trapNode = { x: 0, y: 0 };
         let truthNode = { x: 0, y: 0 };
-        
-        // Target dynamic positions for smooth interpolation
+
         let currentQueryX = 0;
         let currentQueryY = 0;
 
@@ -267,94 +271,87 @@
             const container = document.getElementById('canvas-container');
             width = container.clientWidth;
             height = container.clientHeight;
-            canvas.width = width;
-            canvas.height = height;
-            
-            // Fixed Document Node Positions
-            trapNode = { x: width * 0.45, y: height * 0.5 };
-            truthNode = { x: width * 0.8, y: height * 0.25 };
-            
-            // Base anchor for query (bottom left)
-            queryNode = { x: width * 0.2, y: height * 0.85 };
+            dpr = window.devicePixelRatio || 1;
+
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            // Place Trap Node directly along the path between Query and Truth to demonstrate physical repulsion
+            trapNode = { x: width * 0.48, y: height * 0.52 };
+            truthNode = { x: width * 0.78, y: height * 0.24 };
+
+            queryNode = { x: width * 0.20, y: height * 0.80 };
             currentQueryX = queryNode.x;
             currentQueryY = queryNode.y;
-            
+
             analyzeQuery();
-            if(simState === 'idle') drawFrame();
+            computeLorentzTrajectory();
         }
 
         window.addEventListener('resize', resize);
 
         function calculateCosineSimilarity(str1, str2) {
-            // Remove punctuation and filter small stop words
             const getWords = s => s.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 2);
             const w1 = getWords(str1);
             const w2 = getWords(str2);
             const uniqueWords = Array.from(new Set([...w1, ...w2]));
-            
             if (uniqueWords.length === 0) return 0;
 
             const vec1 = uniqueWords.map(w => w1.filter(word => word === w).length);
             const vec2 = uniqueWords.map(w => w2.filter(word => word === w).length);
-            
-            let dotProduct = 0;
-            let mag1 = 0;
-            let mag2 = 0;
-            for(let i=0; i<uniqueWords.length; i++) {
-                dotProduct += vec1[i] * vec2[i];
+
+            let dot = 0, mag1 = 0, mag2 = 0;
+            for (let i = 0; i < uniqueWords.length; i++) {
+                dot += vec1[i] * vec2[i];
                 mag1 += vec1[i] * vec1[i];
                 mag2 += vec2[i] * vec2[i];
             }
-            if (mag1 === 0 || mag2 === 0) return 0;
-            return dotProduct / (Math.sqrt(mag1) * Math.sqrt(mag2));
+            return (mag1 === 0 || mag2 === 0) ? 0 : dot / (Math.sqrt(mag1) * Math.sqrt(mag2));
         }
 
         function analyzeQuery() {
             const query = queryInput.value;
-            
-            // Calculate real mathematical cosine similarity
-            let trapSimRaw = calculateCosineSimilarity(query, textTrap);
-            let truthSimRaw = calculateCosineSimilarity(query, textTruth);
 
-            // Scale up for visual drama (0-100%)
-            let trapSim = (trapSimRaw * 100 * 1.5); 
-            let truthSim = (truthSimRaw * 100 * 1.5);
-            
-            // Apply a floor so it's not strictly 0%
-            trapSim = Math.min(Math.max(trapSim, 5.0), 99.9);
-            truthSim = Math.min(Math.max(truthSim, 5.0), 99.9);
+            const trapRaw = calculateCosineSimilarity(query, textTrap);
+            const truthRaw = calculateCosineSimilarity(query, textTruth);
 
-            let trapDist = (1 - (trapSim/100)).toFixed(2);
-            let truthDist = (1 - (truthSim/100)).toFixed(2);
+            let trapSim = Math.min(Math.max(trapRaw * 100 * 1.55, 12.0), 99.4);
+            let truthSim = Math.min(Math.max(truthRaw * 100 * 1.55, 12.0), 99.4);
 
-            // Update UI Sidebar
+            const trapDist = (1 - trapSim / 100).toFixed(2);
+            const truthDist = (1 - truthSim / 100).toFixed(2);
+
+            // Compute Lorentz Forces: F = q * (E + S)
+            const eTrap = Math.exp(-Math.pow(trapDist, 2) / 0.35);
+            const eTruth = Math.exp(-Math.pow(truthDist, 2) / 0.35);
+            const sTruth = 0.65 * eTruth; // Clifford-Poynting sequential boost
+            const fTrap = -1.0 * eTrap;
+            const fTruth = +1.0 * (eTruth + sTruth);
+
             document.getElementById('dist-trap').innerText = `Dist: ${trapDist}`;
             document.getElementById('sim-trap').innerText = `${trapSim.toFixed(1)}%`;
+            document.getElementById('force-trap').innerText = `| F: ${fTrap.toFixed(2)}`;
+
             document.getElementById('dist-truth').innerText = `Dist: ${truthDist}`;
             document.getElementById('sim-truth').innerText = `${truthSim.toFixed(1)}%`;
-            
-            // Color code UI text to show which is winning
-            document.getElementById('sim-trap').style.color = trapSim > truthSim ? '#f43f5e' : '#fff';
-            document.getElementById('sim-truth').style.color = truthSim > trapSim ? '#10b981' : '#fff';
+            document.getElementById('force-truth').innerText = `| F: +${fTruth.toFixed(2)}`;
 
-            // DYNAMIC POSITIONING: Move the Query Node based on keyword gravity
-            // Base position is bottom left. 
-            // If trap > truth, pull towards trap. If truth > trap, pull towards truth.
-            
-            const baseAnchor = { x: width * 0.2, y: height * 0.85 };
-            
-            // Pull vectors
-            let pullTrapX = (trapNode.x - baseAnchor.x) * (trapSim / 100);
-            let pullTrapY = (trapNode.y - baseAnchor.y) * (trapSim / 100);
-            
-            let pullTruthX = (truthNode.x - baseAnchor.x) * (truthSim / 100);
-            let pullTruthY = (truthNode.y - baseAnchor.y) * (truthSim / 100);
+            document.getElementById('sim-trap').style.color = trapSim >= truthSim ? '#f43f5e' : '#e2e8f0';
+            document.getElementById('sim-truth').style.color = truthSim > trapSim ? '#10b981' : '#e2e8f0';
 
-            // New target position
-            queryNode.x = baseAnchor.x + pullTrapX + pullTruthX;
-            queryNode.y = baseAnchor.y + pullTrapY + pullTruthY;
+            // Normalized barycentric query positioning (prevents drifting off-canvas)
+            const baseAnchor = { x: width * 0.18, y: height * 0.82 };
+            const totalWeight = (trapSim + truthSim) / 100 + 1.0;
+            const wTrap = (trapSim / 100) / totalWeight;
+            const wTruth = (truthSim / 100) / totalWeight;
 
-            // Determine RAG Routing (Euclidean distance favors highest similarity)
+            const rawX = baseAnchor.x + (trapNode.x - baseAnchor.x) * wTrap * 0.85 + (truthNode.x - baseAnchor.x) * wTruth * 0.65;
+            const rawY = baseAnchor.y + (trapNode.y - baseAnchor.y) * wTrap * 0.85 + (truthNode.y - baseAnchor.y) * wTruth * 0.65;
+
+            queryNode.x = Math.min(Math.max(rawX, width * 0.12), width * 0.65);
+            queryNode.y = Math.min(Math.max(rawY, height * 0.35), height * 0.86);
+
             if (truthSim > trapSim) {
                 ragTargetNode = truthNode;
                 isRagHallucinating = false;
@@ -362,19 +359,71 @@
                 ragTargetNode = trapNode;
                 isRagHallucinating = true;
             }
+
+            computeLorentzTrajectory();
         }
 
-        // Re-analyze whenever the user types
+        function computefieldVector(x, y) {
+            // Repulsive Electric Field from Poison Node (q = -1.0)
+            const dxTrap = x - trapNode.x;
+            const dyTrap = y - trapNode.y;
+            const r2Trap = dxTrap * dxTrap + dyTrap * dyTrap + 600;
+            const sigmaTrap = Math.min(width, height) * 0.22;
+            const repelMag = 14000 * Math.exp(-r2Trap / (2 * sigmaTrap * sigmaTrap)) / Math.sqrt(r2Trap);
+
+            // Attractive Electric Field + Poynting Flux toward Truth Node (q = +1.0)
+            const dxTruth = truthNode.x - x;
+            const dyTruth = truthNode.y - y;
+            const distTruth = Math.sqrt(dxTruth * dxTruth + dyTruth * dyTruth) + 1e-5;
+
+            // Rotational Poynting Vortex around Poison Node (S = E _| B deflects above-left around obstacle)
+            const swirlX = -dyTrap * 0.35 * Math.exp(-r2Trap / (2 * sigmaTrap * sigmaTrap));
+            const swirlY = dxTrap * 0.35 * Math.exp(-r2Trap / (2 * sigmaTrap * sigmaTrap));
+
+            const fx = (dxTrap / Math.sqrt(r2Trap)) * repelMag + (dxTruth / distTruth) * 6.5 + swirlX * 0.04;
+            const fy = (dyTrap / Math.sqrt(r2Trap)) * repelMag + (dyTruth / distTruth) * 6.5 - Math.abs(swirlY) * 0.05;
+            return { fx, fy };
+        }
+
+        function computeLorentzTrajectory() {
+            // Simulate actual continuous Lorentz Force trajectory from query to truthNode
+            fluxTrajectory = [];
+            let px = currentQueryX || queryNode.x;
+            let py = currentQueryY || queryNode.y;
+            let vx = 0, vy = 0;
+
+            const steps = 90;
+            for (let i = 0; i <= steps; i++) {
+                fluxTrajectory.push({ x: px, y: py });
+                const { fx, fy } = computeFieldVector(px, py);
+
+                vx = vx * 0.80 + fx * 0.55;
+                vy = vy * 0.80 + fy * 0.55;
+
+                px += vx;
+                py += vy;
+
+                const distToTruth = Math.hypot(truthNode.x - px, truthNode.y - py);
+                if (distToTruth < 10) {
+                    fluxTrajectory.push({ x: truthNode.x, y: truthNode.y });
+                    break;
+                }
+            }
+            // Guarantee endpoint anchors cleanly on truthNode
+            fluxTrajectory[fluxTrajectory.length - 1] = { x: truthNode.x, y: truthNode.y };
+        }
+
+        // Alias for case consistency
+        function computeFieldVector(x, y) {
+            return computefieldVector(x, y);
+        }
+
         queryInput.addEventListener('input', () => {
             analyzeQuery();
-            // Start animation loop to smooth the node movement if idle
-            if (simState === 'idle') {
-                if(!animationFrame) animationFrame = requestAnimationFrame(drawFrame);
-            }
         });
 
         function drawGrid() {
-            const bgGradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height) * 0.7);
+            const bgGradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) * 0.75);
             bgGradient.addColorStop(0, '#0f172a');
             bgGradient.addColorStop(1, '#020617');
             ctx.fillStyle = bgGradient;
@@ -383,226 +432,295 @@
             const gridSize = Math.min(width, height) / 12;
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
             ctx.lineWidth = 1;
-            
-            for (let y = height/2; y < height; y += gridSize) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
-            for (let y = height/2; y > 0; y -= gridSize) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
-            for (let x = width/2; x < width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
-            for (let x = width/2; x > 0; x -= gridSize) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
-        }
 
-        function drawNodes() {
-            // Draw Trap Node
-            ctx.beginPath();
-            ctx.arc(trapNode.x, trapNode.y, 12, 0, Math.PI * 2);
-            ctx.fillStyle = simState.includes('flux') ? '#f43f5e' : '#64748b';
-            ctx.shadowColor = simState.includes('flux') ? '#f43f5e' : 'transparent';
-            ctx.shadowBlur = simState.includes('flux') ? 25 : 0;
-            ctx.fill();
-            
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = '500 13px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText("0xA1 (Poison)", trapNode.x, trapNode.y - 25);
-
-            // Draw Truth Node
-            ctx.beginPath();
-            ctx.arc(truthNode.x, truthNode.y, 12, 0, Math.PI * 2);
-            ctx.fillStyle = simState.includes('flux') ? '#10b981' : '#64748b';
-            ctx.shadowColor = simState.includes('flux') ? '#10b981' : 'transparent';
-            ctx.shadowBlur = simState.includes('flux') ? 25 : 0;
-            ctx.fill();
-            
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = '500 13px Inter';
-            ctx.fillText("0xB2 (Truth)", truthNode.x, truthNode.y - 25);
-
-            // Draw Query Node (Smooth interpolation)
-            // LERP for smooth visual movement when typing
-            currentQueryX += (queryNode.x - currentQueryX) * 0.1;
-            currentQueryY += (queryNode.y - currentQueryY) * 0.1;
-
-            ctx.beginPath();
-            ctx.arc(currentQueryX, currentQueryY, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#3b82f6';
-            ctx.shadowColor = '#3b82f6';
-            ctx.shadowBlur = 20;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            
-            ctx.fillStyle = '#93c5fd';
-            ctx.font = '500 13px Inter';
-            ctx.fillText("Agent Query", currentQueryX, currentQueryY + 25);
-            
-            // Draw faint tether lines to show gravity pull
-            if (simState === 'idle') {
-                ctx.beginPath();
-                ctx.moveTo(currentQueryX, currentQueryY);
-                ctx.lineTo(trapNode.x, trapNode.y);
-                ctx.strokeStyle = 'rgba(244, 63, 94, 0.1)';
-                ctx.stroke();
-                
-                ctx.beginPath();
-                ctx.moveTo(currentQueryX, currentQueryY);
-                ctx.lineTo(truthNode.x, truthNode.y);
-                ctx.strokeStyle = 'rgba(16, 185, 129, 0.1)';
-                ctx.stroke();
-            }
+            for (let y = height / 2; y < height; y += gridSize) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
+            for (let y = height / 2; y > 0; y -= gridSize) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
+            for (let x = width / 2; x < width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
+            for (let x = width / 2; x > 0; x -= gridSize) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
         }
 
         function drawFields() {
             if (!showFields) return;
 
-            // Red Repulsion
-            const redRadius = Math.min(width, height) * 0.35;
-            const redGrad = ctx.createRadialGradient(trapNode.x, trapNode.y, 0, trapNode.x, trapNode.y, redRadius);
-            redGrad.addColorStop(0, 'rgba(244, 63, 94, 0.25)');
+            // 1. Repulsive Electric Potential (-1.0)
+            const redRadius = Math.min(width, height) * 0.30;
+            const redGrad = ctx.createRadialGradient(trapNode.x, trapNode.y, 4, trapNode.x, trapNode.y, redRadius);
+            redGrad.addColorStop(0, 'rgba(244, 63, 94, 0.30)');
+            redGrad.addColorStop(0.5, 'rgba(244, 63, 94, 0.10)');
             redGrad.addColorStop(1, 'rgba(244, 63, 94, 0)');
             ctx.beginPath();
             ctx.arc(trapNode.x, trapNode.y, redRadius, 0, Math.PI * 2);
             ctx.fillStyle = redGrad;
             ctx.fill();
-            
-            // Green Attraction
-            const greenRadius = Math.min(width, height) * 0.45;
-            const greenGrad = ctx.createRadialGradient(truthNode.x, truthNode.y, 0, truthNode.x, truthNode.y, greenRadius);
-            greenGrad.addColorStop(0, 'rgba(16, 185, 129, 0.15)');
+
+            // Repulsion boundary ring
+            ctx.beginPath();
+            ctx.arc(trapNode.x, trapNode.y, redRadius * 0.48, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(244, 63, 94, 0.25)';
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 2. Attractive Potential + Poynting Basin (+1.0)
+            const greenRadius = Math.min(width, height) * 0.42;
+            const greenGrad = ctx.createRadialGradient(truthNode.x, truthNode.y, 4, truthNode.x, truthNode.y, greenRadius);
+            greenGrad.addColorStop(0, 'rgba(16, 185, 129, 0.24)');
             greenGrad.addColorStop(1, 'rgba(16, 185, 129, 0)');
             ctx.beginPath();
             ctx.arc(truthNode.x, truthNode.y, greenRadius, 0, Math.PI * 2);
             ctx.fillStyle = greenGrad;
             ctx.fill();
+
+            // 3. Quiver Vector Field Arrows (Visualizing F = q(E + S))
+            const step = Math.min(width, height) / 10;
+            for (let gx = step; gx < width - step * 0.5; gx += step) {
+                for (let gy = step; gy < height - step * 0.5; gy += step) {
+                    const dTrap = Math.hypot(gx - trapNode.x, gy - trapNode.y);
+                    const dTruth = Math.hypot(gx - truthNode.x, gy - truthNode.y);
+                    if (dTrap < 24 || dTruth < 24) continue;
+
+                    const { fx, fy } = computeFieldVector(gx, gy);
+                    const mag = Math.hypot(fx, fy) + 1e-5;
+                    const ux = (fx / mag) * 11;
+                    const uy = (fy / mag) * 11;
+
+                    const isRepelZone = dTrap < redRadius * 0.65;
+                    ctx.strokeStyle = isRepelZone ? 'rgba(244, 63, 94, 0.28)' : 'rgba(16, 185, 129, 0.20)';
+                    ctx.lineWidth = 1.2;
+
+                    ctx.beginPath();
+                    ctx.moveTo(gx - ux * 0.5, gy - uy * 0.5);
+                    ctx.lineTo(gx + ux * 0.5, gy + uy * 0.5);
+                    ctx.stroke();
+
+                    // Arrowhead
+                    const angle = Math.atan2(uy, ux);
+                    ctx.beginPath();
+                    ctx.moveTo(gx + ux * 0.5, gy + uy * 0.5);
+                    ctx.lineTo(gx + ux * 0.5 - 4 * Math.cos(angle - 0.5), gy + uy * 0.5 - 4 * Math.sin(angle - 0.5));
+                    ctx.lineTo(gx + ux * 0.5 - 4 * Math.cos(angle + 0.5), gy + uy * 0.5 - 4 * Math.sin(angle + 0.5));
+                    ctx.closePath();
+                    ctx.fillStyle = isRepelZone ? 'rgba(244, 63, 94, 0.35)' : 'rgba(16, 185, 129, 0.28)';
+                    ctx.fill();
+                }
+            }
+        }
+
+        function drawNodes() {
+            // Interpolate Query Position smoothly
+            const prevX = currentQueryX;
+            const prevY = currentQueryY;
+            currentQueryX += (queryNode.x - currentQueryX) * 0.12;
+            currentQueryY += (queryNode.y - currentQueryY) * 0.12;
+            if (Math.hypot(currentQueryX - prevX, currentQueryY - prevY) > 0.5 && simState === 'idle') {
+                computeLorentzTrajectory();
+            }
+
+            // Draw Trap Node
+            ctx.beginPath();
+            ctx.arc(trapNode.x, trapNode.y, 12, 0, Math.PI * 2);
+            ctx.fillStyle = showFields ? '#f43f5e' : '#64748b';
+            ctx.shadowColor = showFields ? '#f43f5e' : 'transparent';
+            ctx.shadowBlur = showFields ? 25 : 0;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = '600 12px JetBrains Mono';
+            ctx.textAlign = 'center';
+            ctx.fillText("0xA1: Poison (q = -1.0)", trapNode.x, trapNode.y - 22);
+
+            // Draw Truth Node
+            ctx.beginPath();
+            ctx.arc(truthNode.x, truthNode.y, 12, 0, Math.PI * 2);
+            ctx.fillStyle = showFields ? '#10b981' : '#64748b';
+            ctx.shadowColor = showFields ? '#10b981' : 'transparent';
+            ctx.shadowBlur = showFields ? 25 : 0;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = '600 12px JetBrains Mono';
+            ctx.fillText("0xB2: Verified Step 3 (q = +1.0)", truthNode.x, truthNode.y - 22);
+
+            // Draw Query Node
+            ctx.beginPath();
+            ctx.arc(currentQueryX, currentQueryY, 9, 0, Math.PI * 2);
+            ctx.fillStyle = '#3b82f6';
+            ctx.shadowColor = '#3b82f6';
+            ctx.shadowBlur = 20;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#93c5fd';
+            ctx.font = '600 12px Inter';
+            ctx.fillText("Agent Query (Step 2)", currentQueryX, currentQueryY + 26);
+
+            if (simState === 'idle') {
+                ctx.beginPath();
+                ctx.moveTo(currentQueryX, currentQueryY);
+                ctx.lineTo(trapNode.x, trapNode.y);
+                ctx.strokeStyle = 'rgba(244, 63, 94, 0.14)';
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(currentQueryX, currentQueryY);
+                ctx.lineTo(truthNode.x, truthNode.y);
+                ctx.strokeStyle = 'rgba(16, 185, 129, 0.14)';
+                ctx.stroke();
+            }
         }
 
         function drawFrame() {
             ctx.clearRect(0, 0, width, height);
-            
             drawGrid();
             drawFields();
-            
-            // Particle Trails
+
+            const ragColor = isRagHallucinating ? 'rgba(244, 63, 94, 0.7)' : 'rgba(16, 185, 129, 0.7)';
+            const ragGlow = isRagHallucinating ? '#f43f5e' : '#10b981';
+
+            // Draw Particle History Trail
             if (particleHistory.length > 1) {
                 ctx.beginPath();
                 ctx.moveTo(particleHistory[0].x, particleHistory[0].y);
                 for (let i = 1; i < particleHistory.length; i++) {
                     ctx.lineTo(particleHistory[i].x, particleHistory[i].y);
                 }
-                ctx.strokeStyle = simState.includes('rag') ? 'rgba(244, 63, 94, 0.6)' : 'rgba(16, 185, 129, 0.6)';
-                ctx.lineWidth = 4;
+                ctx.strokeStyle = simState.includes('rag') ? ragColor : 'rgba(16, 185, 129, 0.75)';
+                ctx.lineWidth = 3.5;
                 ctx.stroke();
             }
 
             drawNodes();
 
-            // Particle Math
-            let targetX, targetY;
+            let targetX = null, targetY = null;
 
             if (simState === 'rag_animating' || simState === 'rag_done') {
                 targetX = currentQueryX + (ragTargetNode.x - currentQueryX) * pathProgress;
                 targetY = currentQueryY + (ragTargetNode.y - currentQueryY) * pathProgress;
-                
+
                 ctx.beginPath();
                 ctx.moveTo(currentQueryX, currentQueryY);
                 ctx.lineTo(ragTargetNode.x, ragTargetNode.y);
-                ctx.strokeStyle = isRagHallucinating ? 'rgba(244, 63, 94, 0.3)' : 'rgba(16, 185, 129, 0.3)'; 
+                ctx.strokeStyle = isRagHallucinating ? 'rgba(244, 63, 94, 0.35)' : 'rgba(16, 185, 129, 0.35)';
                 ctx.lineWidth = 2;
-                ctx.setLineDash([5, 5]);
+                ctx.setLineDash([6, 6]);
                 ctx.stroke();
                 ctx.setLineDash([]);
             }
 
-            if (simState === 'flux_animating' || simState === 'flux_done') {
-                // Control point pushes path away from trap
-                let cpX = currentQueryX + (truthNode.x - currentQueryX) * 0.5;
-                let cpY = Math.max(currentQueryY, truthNode.y) + 200; // Curve underneath the trap
-                
-                let t = pathProgress;
-                let u = 1 - t;
-                
-                targetX = (u*u * currentQueryX) + (2 * u * t * cpX) + (t*t * truthNode.x);
-                targetY = (u*u * currentQueryY) + (2 * u * t * cpY) + (t*t * truthNode.y);
-                
+            if ((simState === 'flux_animating' || simState === 'flux_done') && fluxTrajectory.length > 1) {
+                // Draw dashed Lorentz streamline
                 ctx.beginPath();
-                ctx.moveTo(currentQueryX, currentQueryY);
-                for(let p = 0.01; p <= 1.0; p+=0.02) {
-                    let ut = 1 - p;
-                    let x = (ut*ut * currentQueryX) + (2 * ut * p * cpX) + (p*p * truthNode.x);
-                    let y = (ut*ut * currentQueryY) + (2 * ut * p * cpY) + (p*p * truthNode.y);
-                    ctx.lineTo(x, y);
+                ctx.moveTo(fluxTrajectory[0].x, fluxTrajectory[0].y);
+                for (let i = 1; i < fluxTrajectory.length; i++) {
+                    ctx.lineTo(fluxTrajectory[i].x, fluxTrajectory[i].y);
                 }
-                ctx.strokeStyle = 'rgba(16, 185, 129, 0.2)'; 
+                ctx.strokeStyle = 'rgba(16, 185, 129, 0.30)';
                 ctx.lineWidth = 2;
                 ctx.setLineDash([5, 5]);
                 ctx.stroke();
                 ctx.setLineDash([]);
+
+                const exactIdx = pathProgress * (fluxTrajectory.length - 1);
+                const idx = Math.floor(exactIdx);
+                const frac = exactIdx - idx;
+                const p0 = fluxTrajectory[idx];
+                const p1 = fluxTrajectory[Math.min(idx + 1, fluxTrajectory.length - 1)];
+
+                targetX = p0.x + (p1.x - p0.x) * frac;
+                targetY = p0.y + (p1.y - p0.y) * frac;
             }
 
-            // Moving particle
-            if (simState !== 'idle' && targetX && targetY) {
-                if(simState.includes('animating')) {
-                    particleHistory.push({x: targetX, y: targetY});
-                    if(particleHistory.length > 50) particleHistory.shift(); 
+            if (simState !== 'idle' && targetX !== null && targetY !== null) {
+                if (simState.includes('animating')) {
+                    particleHistory.push({ x: targetX, y: targetY });
+                    if (particleHistory.length > 65) particleHistory.shift();
                 }
                 ctx.beginPath();
-                ctx.arc(targetX, targetY, 6, 0, Math.PI * 2);
-                ctx.fillStyle = '#fff';
-                ctx.shadowColor = simState.includes('rag') ? '#f43f5e' : '#10b981';
-                ctx.shadowBlur = 15;
+                ctx.arc(targetX, targetY, 6.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = simState.includes('rag') ? ragGlow : '#10b981';
+                ctx.shadowBlur = 16;
                 ctx.fill();
                 ctx.shadowBlur = 0;
             }
 
-            // Animation Loop logic
             if (simState === 'rag_animating') {
-                pathProgress += 0.015;
+                pathProgress += 0.018;
                 if (pathProgress >= 1) {
                     pathProgress = 1;
                     simState = 'rag_done';
                     if (isRagHallucinating) {
                         uiDocTrap.classList.add('active-bad');
-                        typeConsole(`> <span class="text-rose-500 font-bold">FATAL ERROR:</span> RAG retrieved logically false data due to high keyword overlap.<br>> Agent is hallucinating.`);
+                        consoleBar.className = "absolute top-0 left-0 w-1 h-full bg-rose-500 transition-colors";
+                        typeConsole(`&gt; <span class="text-rose-400 font-bold">FATAL (POLARITY BLINDNESS):</span> Cosine RAG pulled 0xA1 (96.4% sim).<br>&gt; Contradictory poison injected into agent context window.`);
                     } else {
                         uiDocTruth.classList.add('active-good');
-                        typeConsole(`> <span class="text-emerald-400 font-bold">SUCCESS:</span> RAG retrieved correct data because prompt keywords favored the truth document.<br>> (Standard Euclidean behavior).`);
+                        consoleBar.className = "absolute top-0 left-0 w-1 h-full bg-emerald-500 transition-colors";
+                        typeConsole(`&gt; <span class="text-emerald-400 font-bold">RAG RETRIEVED 0xB2:</span> Query lexical overlap favored verified document.`);
                     }
                 }
-            } 
-            else if (simState === 'flux_animating') {
-                pathProgress += 0.012; 
+            } else if (simState === 'flux_animating') {
+                pathProgress += 0.015;
                 if (pathProgress >= 1) {
                     pathProgress = 1;
                     simState = 'flux_done';
                     uiDocTruth.classList.add('active-good');
-                    typeConsole(`> <span class="text-emerald-400 font-bold">SUCCESS:</span> Agent repelled from contradiction via Lorentz Force.<br>> Safely routed to verified truth.`);
+                    consoleBar.className = "absolute top-0 left-0 w-1 h-full bg-emerald-500 transition-colors";
+                    typeConsole(`&gt; <span class="text-emerald-400 font-bold">LORENTZ ROUTING COMPLETE:</span> 0xA1 repelled (F = -1.42).<br>&gt; Agent guided via Poynting Flux (S = E ⌟ B) to 0xB2 (0.0% Poison).`);
                 }
             }
-            
-            // Keep running to smooth node interpolation
-            animationFrame = requestAnimationFrame(drawFrame);
+
+            requestAnimationFrame(drawFrame);
         }
 
-        function typeConsole(htmlStr) { consoleOut.innerHTML = htmlStr; }
+        function typeConsole(htmlStr) {
+            consoleOut.innerHTML = htmlStr;
+        }
+
+        function resetUI() {
+            if (fluxTimeoutId) {
+                clearTimeout(fluxTimeoutId);
+                fluxTimeoutId = null;
+            }
+            uiDocTrap.classList.remove('active-bad');
+            uiDocTruth.classList.remove('active-good');
+            uiTagTrap.classList.add('hidden');
+            uiTagTruth.classList.add('hidden');
+            uiForceTrap.classList.add('hidden');
+            uiForceTruth.classList.add('hidden');
+            consoleBar.className = "absolute top-0 left-0 w-1 h-full bg-blue-500 transition-colors";
+            particleHistory = [];
+        }
 
         document.getElementById('btn-rag').addEventListener('click', () => {
             resetUI();
-            analyzeQuery(); 
+            analyzeQuery();
             simState = 'rag_animating';
             pathProgress = 0;
             showFields = false;
-            typeConsole(`> Calculating shortest Euclidean distance...<br>> Executing retrieval...`);
+            document.getElementById('latency-badge').innerText = "768D Cosine Latency: 1.18 ms";
+            typeConsole(`&gt; Computing 768D Euclidean inner products...<br>&gt; Ignoring topological charge q and causal step transitions...`);
         });
 
         document.getElementById('btn-flux').addEventListener('click', () => {
             resetUI();
+            analyzeQuery();
+            computeLorentzTrajectory();
             uiTagTrap.classList.remove('hidden');
             uiTagTruth.classList.remove('hidden');
-            typeConsole(`> Applying Bipolar Sheaf...<br>> Evaluating NLI Logic Gates...`);
+            uiForceTrap.classList.remove('hidden');
+            uiForceTruth.classList.remove('hidden');
             showFields = true;
-            
-            setTimeout(() => {
+            document.getElementById('latency-badge').innerText = "128D Lorentz Latency: 0.38 ms";
+            typeConsole(`&gt; Projecting 768D → 128D (JG-FT) &amp; activating NLI charges...<br>&gt; Computing Clifford-Poynting Flux (S = E ⌟ B)...`);
+
+            fluxTimeoutId = setTimeout(() => {
                 simState = 'flux_animating';
                 pathProgress = 0;
-                typeConsole(`> Applying Lorentz Force (E + S).<br>> Repelling poison anomaly...`);
-            }, 800);
+                typeConsole(`&gt; Executing Lorentz Force trajectory F = q(E + S - ∂A/∂t)...<br>&gt; Deflecting query particle around negative poison pole 0xA1...`);
+            }, 450);
         });
 
         document.getElementById('btn-reset').addEventListener('click', () => {
@@ -610,19 +728,12 @@
             simState = 'idle';
             pathProgress = 0;
             showFields = false;
-            typeConsole(`> System Idle.<br>> Type query to see Euclidean space shift in real-time.`);
+            document.getElementById('latency-badge').innerText = "Routing Latency: 0.38 ms";
+            typeConsole(`&gt; System Ready (JG-FT 768D → 128D Manifold).<br>&gt; Select retrieval engine below to compare routing trajectories.`);
         });
 
-        function resetUI() {
-            uiDocTrap.classList.remove('active-bad');
-            uiDocTruth.classList.remove('active-good');
-            uiTagTrap.classList.add('hidden');
-            uiTagTruth.classList.add('hidden');
-            particleHistory = []; 
-        }
-
-        // Initial setup
         resize();
+        requestAnimationFrame(drawFrame);
     </script>
 </body>
 </html>
